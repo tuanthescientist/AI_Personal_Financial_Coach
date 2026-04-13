@@ -1,6 +1,7 @@
-version: "3.9"
+﻿version: "3.9"
 
 services:
+  # ── Backend API ──
   api:
     build: .
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
@@ -11,12 +12,21 @@ services:
       - ./data:/app/data
     env_file:
       - .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://admin:supersecret@db:5432/financial_coach
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 5s
       retries: 3
 
+  # ── Streamlit Dashboard ──
   dashboard:
     build: .
     command: streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0
@@ -27,3 +37,32 @@ services:
     depends_on:
       api:
         condition: service_healthy
+
+  # ── PostgreSQL Database ──
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: supersecret
+      POSTGRES_DB: financial_coach
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d financial_coach"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis Cache ──
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
