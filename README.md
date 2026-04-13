@@ -51,31 +51,30 @@ The goal is to increase customer engagement, drive product cross-sell, and impro
 
 ## System Architecture
 
-`
-SOL App (Client)
-       │
-       ▼
-┌─────────────────────────────────────────┐
-│         FastAPI Gateway (:8000)          │
-│  /chat  /spending  /recommendations     │
-│              /goals  /health            │
-├─────────┬───────────┬───────────────────┤
-│ Financial│  Pandas   │    Product        │
-│ Coach    │  Analysis │    Recommender    │
-│ Agent    │  Engine   │    Agent          │
-├──────────┴───────────┴──────────────────┤
-│       Google Gemini LLM API             │
-│     gemini-3.1-flash-lite-preview       │
-├─────────────────────────────────────────┤
-│      SQLite / PostgreSQL Database       │
-└─────────────────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────────┐
-│    Streamlit Dashboard (:8501)          │
-│  Plotly Charts · Chat · Recommendations │
-└─────────────────────────────────────────┘
-`
+```mermaid
+graph TD
+    Client[SOL App Client] -->|REST/JSON| API[FastAPI :8000]
+    subgraph Backend [AI Coach Backend]
+        API --> Chat[Financial Coach Agent]
+        API --> Analytics[Pandas Analysis Engine]
+        API --> Recs[Product Recommender]
+        
+        Chat -.-> Analytics
+        Recs -.-> Analytics
+    end
+    
+    subgraph External System
+        Chat <--> LLM((Google Gemini API))
+        Recs <--> LLM
+    end
+    
+    subgraph Storage
+        Analytics <--> DB[(PostgreSQL)]
+        %% Goal trackers etc <--> DB
+    end
+
+    Dashboard[Streamlit :8501] -.->|Fetch metrics & chat UI| API
+```
 
 > Full architecture diagram → `docs/ARCHITECTURE.md`
 
@@ -299,3 +298,4 @@ This starts both services:
 ## License
 
 This project is for research and educational purposes. See the repository for license details.
+
