@@ -97,7 +97,7 @@ graph TD
 
 ## Project Structure
 
-`
+```text
 AI_Personal_Financial_Coach/
 ├── src/
 │   ├── main.py                  # FastAPI application entry point
@@ -138,7 +138,7 @@ AI_Personal_Financial_Coach/
 ├── .env.example
 ├── .gitignore
 └── README.md
-`
+```
 
 ---
 
@@ -151,7 +151,7 @@ AI_Personal_Financial_Coach/
 
 ### 1. Clone & Setup
 
-`ash
+```bash
 git clone https://github.com/tuanthescientist/AI_Personal_Financial_Coach.git
 cd AI_Personal_Financial_Coach
 
@@ -162,34 +162,34 @@ venv\Scripts\activate
 source venv/bin/activate
 
 pip install -r requirements.txt
-`
+```
 
 ### 2. Configure Environment
 
-`ash
+```bash
 cp .env.example .env
 # Edit .env and add your GEMINI_API_KEY
-`
+```
 
 ### 3. Seed Demo Data
 
-`ash
+```bash
 python scripts/seed_db.py
-`
+```
 
 ### 4. Start the API Server
 
-`ash
+```bash
 uvicorn src.main:app --reload --port 8000
-`
+```
 
 API docs available at: `http://localhost:8000/docs`
 
 ### 5. Launch the Dashboard
 
-`ash
+```bash
 streamlit run dashboard/app.py
-`
+```
 
 Dashboard available at: `http://localhost:8501`
 
@@ -224,9 +224,9 @@ The Streamlit dashboard provides three tabs:
 
 ### Docker Compose (recommended)
 
-`ash
+```bash
 docker-compose up --build
-`
+```
 
 This starts both services:
 - **API**: `http://localhost:8000`
@@ -298,4 +298,5 @@ This starts both services:
 ## License
 
 This project is for research and educational purposes. See the repository for license details.
+
 
